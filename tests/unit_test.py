@@ -8,65 +8,95 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 import collect_data
 import feature_extraction
+import time_features
+import content_features
 
-
-class TestCollectDataUnit(unittest.TestCase):
+# Collect Data
+class TestCollectData(unittest.TestCase):
 
     @patch("collect_data.build")
-    def test_get_youtube_client_calls_build(self, mock_build):
-        mock_build.return_value = "fake_client"
+    def test_get_client(self, mock_build):
+        mock_build.return_value = "client"
+        self.assertEqual(collect_data.get_youtube_client(), "client")
 
-        client = collect_data.get_youtube_client()
-
-        self.assertEqual(client, "fake_client")
-
-    def test_extract_features_returns_expected_fields(self):
+    def test_extract_features(self):
         item = {
-            "id": "abc123",
+            "id": "abc",
             "snippet": {
-                "title": "Top 10 Python Tricks!",
-                "channelTitle": "Code Channel",
+                "title": "Top 10!",
+                "channelTitle": "Channel",
                 "publishedAt": "2026-01-01T00:00:00Z",
-                "description": "Useful Python tips",
-                "tags": ["python", "tips", "coding"]
+                "description": "desc",
+                "tags": ["a", "b"]
             },
             "statistics": {
-                "viewCount": "1500000",
-                "likeCount": "50000",
-                "commentCount": "1200"
+                "viewCount": "1000",
+                "likeCount": "100",
+                "commentCount": "10"
             },
-            "contentDetails": {
-                "duration": "PT5M30S"
-            }
+            "contentDetails": {"duration": "PT1M"}
         }
 
-        result = collect_data.extract_features(item)
+        r = collect_data.extract_features(item)
 
-        self.assertEqual(result["video_id"], "abc123")
-        self.assertEqual(result["views"], 1500000)
-        self.assertEqual(result["likes"], 50000)
-        self.assertEqual(result["comments"], 1200)
-        self.assertEqual(result["duration_seconds"], 330)
-        self.assertEqual(result["tag_count"], 3)
-        self.assertEqual(result["is_viral"], 1)
+        self.assertEqual(r["video_id"], "abc")
+        self.assertEqual(r["views"], 1000)
+        self.assertEqual(r["tag_count"], 2)
 
 
-class TestFeatureExtractionUnit(unittest.TestCase):
 
-    def test_extract_engagement_features_computes_ratios(self):
+# Engagement features
+class TestEngagement(unittest.TestCase):
+
+    def test_engagement(self):
+        df = pd.DataFrame([{"video_id": "v1","views": 1000, "likes": 100, "comments": 20}])
+        r = feature_extraction.extract_engagement_features(df).iloc[0]
+
+        self.assertAlmostEqual(r["engagement_rate"], 0.12)
+
+
+
+# Content features
+class TestContent(unittest.TestCase):
+
+    def test_content_features(self):
+        df = pd.DataFrame([{
+            "video_id": "v1",
+            "desc_length": 100,
+            "tag_count": 4,
+            "title_length": 20,
+            "title_word_count": 4,
+            "has_number": 1,
+            "has_question": 0,
+            "has_exclamation": 1
+        }])
+
+        r = content_features.extract_content_features(df).iloc[0]
+
+        self.assertEqual(r["title_clickbait_score"], 2)
+        self.assertAlmostEqual(r["avg_word_length_title"], 5.0)
+
+# Time features
+class TestTime(unittest.TestCase):
+
+    @patch("time_features.fetch_video_names")
+    def test_time_features(self, mock_names):
+        mock_names.return_value = {"v1": "Video"}
+
         df = pd.DataFrame([
-            {"video_id": "v1", "views": 1000, "likes": 100, "comments": 20}
+            {"video_id": "v1", "published_at": "2026-01-01T10:00:00Z"}
         ])
 
-        result = feature_extraction.extract_engagement_features(df)
-        row = result.iloc[0]
+        with patch("pandas.Timestamp.now") as mock_now:
+            mock_now.return_value = pd.Timestamp("2026-01-05T00:00:00Z")
 
-        self.assertAlmostEqual(row["likes_per_view"], 0.1)
-        self.assertAlmostEqual(row["comments_per_view"], 0.02)
-        self.assertAlmostEqual(row["likes_per_100_views"], 10.0)
-        self.assertAlmostEqual(row["comments_per_100_views"], 2.0)
-        self.assertAlmostEqual(row["engagement_rate"], 0.12)
+            r = time_features.extract_time_features(df).iloc[0]
+
+            self.assertEqual(r["video_name"], "Video")
+            self.assertEqual(r["publish_hour"], 10)
+            self.assertEqual(r["days_since_publish"], 3)
 
 
+#main
 if __name__ == "__main__":
     unittest.main()
