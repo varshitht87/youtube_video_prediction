@@ -148,7 +148,7 @@ def load_from_database():
 
 if __name__ == "__main__":
     # Step 1: Collect data
-    df = collect_dataset(VIRAL_QUERIES, results_per_query=50)
+    df = collect_dataset(VIRAL_QUERIES, results_per_query=10)
 
     # Step 2: Save to DB
     save_to_database(df)
