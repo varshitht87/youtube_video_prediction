@@ -1,0 +1,4 @@
+pandas
+isodate
+google-api-python-client
+python-dotenv
