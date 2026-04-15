@@ -12,12 +12,13 @@ YOUTUBE_API_VERSION = "v3"
 DB_PATH = "youtube_data.db"
 TABLE_NAME = "videos"
 
-VIRAL_QUERIES = ["most viral videos 2025",
-                 "viral gaming videos 2025",
-    "funny viral moments 2025",
+VIRAL_QUERIES = ["most viral videos 2025","top videos of 2025",""
+    "viral gaming videos 2025","viral gaming videos 2024",
+    "funny viral moments 2025","funny viral moments 2024",
     "viral life hacks 2025",
-    "viral music 2025",
-    "viral challenge 2025",
+    "viral music 2025","viral music 2024",
+    "viral challenge 2025","first vlogs","school trips",
+    "viral ipl moments",
     "viral news 2025",
     "viral tech review 2025",
     "viral food recipe 2025",
