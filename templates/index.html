@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Publish Day Recommender</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header class="site-header">
+        <div class="container">
+            <div class="hero-header">
+                <div class="hero-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" class="youtube-icon">
+                        <rect x="1.5" y="4.5" width="21" height="15" rx="5" ry="5"></rect>
+                        <polygon points="10,8.5 16,12 10,15.5"></polygon>
+                    </svg>
+                </div>
+
+                <div class="hero-text">
+                    <p class="hero-kicker">DATA Based -POWERED FLASK INTERFACE</p>
+                    <h1>YouTube publish day recommender</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <div class="container">
+            <div class="layout">
+                <div class="card intro">
+                    <h2>🚀 Optimize Your Next Video</h2>
+                    <p>Enter your video details to get data-driven recommendations based on our data. Find the best upload time and useful tags.</p>
+                </div>
+
+                <form method="POST" action="/analyze">
+                    <div class="card">
+                        <label for="title">Video Title</label>
+                        <input type="text" id="title" name="title" value="{{ form.title if form else '' }}" required>
+
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="4">{{ form.description if form else '' }}</textarea>
+
+                        <div class="two-col">
+                            <div>
+                                <label for="duration">Duration (seconds)</label>
+                                <input type="number" id="duration" name="duration" value="{{ form.duration if form else '' }}" min="1">
+                            </div>
+                            <div>
+                                <label for="category">Category</label>
+                                <input type="text" id="category" name="category" value="{{ form.category if form else '' }}" placeholder="e.g. gaming, music">
+                            </div>
+                        </div>
+
+                        <label for="tags">Tags (comma separated)</label>
+                        <textarea id="tags" name="tags" rows="2">{{ form.tags if form else '' }}</textarea>
+
+                        <button type="submit" class="btn-primary">🔥 Analyze with dataset</button>
+                    </div>
+                </form>
+            </div>
+
+            {% if result %}
+            <div class="results-grid">
+                <div class="card">
+                    <h3>Recommended publish day</h3>
+                    <h2>{{ result.best_day }}</h2>
+                    <p>{{ result.reason }}</p>
+                    <p class="meta">Matching rows found: {{ result.matched_count }}</p>
+                </div>
+
+                <div class="card">
+                    <h3>Recommended tags</h3>
+                    <div class="tag-block">
+                        {% for tag in result.tag_data.recommended %}
+                        <span class="tag-pill">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>New tag suggestions</h3>
+                    <div class="tag-block">
+                        {% for tag in result.tag_data.new_suggestions %}
+                        <span class="tag-pill muted">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Supporting input features</h3>
+                    <div class="kv-grid">
+                        {% for key, value in result.features.items() %}
+                        <div class="kv">
+                            <span>{{ key.replace('_', ' ') }}</span>
+                            <strong>{{ value }}</strong>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="card wide">
+                    <h3>Closest historical matches</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Channel</th>
+                                    <th>Published</th>
+                                    <th>Duration</th>
+                                    <th>Views</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in result.matches %}
+                                <tr>
+                                    <td>{{ row.title[:60] }}{% if row.title|length > 60 %}...{% endif %}</td>
+                                    <td>{{ row.channel_title }}</td>
+                                    <td>{{ row.published_at[:10] if row.published_at else 'Unknown' }}</td>
+                                    <td>{{ row.duration_seconds or 0 }}s</td>
+                                    <td>{{ row.views or 0 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+</body>
+</html>
