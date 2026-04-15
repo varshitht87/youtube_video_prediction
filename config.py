@@ -13,6 +13,7 @@ DB_PATH = "youtube_data.db"
 TABLE_NAME = "videos"
 
 VIRAL_QUERIES = ["most viral videos 2025",
+                 "viral gaming videos 2025"
     "funny viral moments 2025",
     "viral life hacks 2025",
     "viral music 2025",
