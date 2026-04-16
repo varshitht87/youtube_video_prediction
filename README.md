@@ -217,11 +217,11 @@ xyz789     3.89                  0.0487
 ---
 
 ## AI Usage Attribution
-This project was developed with assistance from ChatGPT for code guidance, documentation and developing the frontend interface using flask
+This project was developed with assistance from Perplexity AI for code guidance, documentation and developing the frontend interface using flask
 
 Previous Colab link: https://colab.research.google.com/drive/1MrRG9wSM-Lzpejs2D6X-zQMPGeIge0cR?usp=sharing
 
-Reference: https://chatgpt.com/share/69e0bf08-8930-832a-9f04-368fda236dc8
+Reference: https://www.perplexity.ai/search/https-github-com-varshitht87-y-zmHv8cRsTzGJR5QtjmK.yg
 
 ---
 
