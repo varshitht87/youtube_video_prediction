@@ -216,9 +216,23 @@ xyz789     3.89                  0.0487
 
 ---
 
+## AI Usage Attribution
+This project was developed with assistance from ChatGPT for code guidance, documentation and developing the frontend interface using flask
+
+Previous Colab link: https://colab.research.google.com/drive/1MrRG9wSM-Lzpejs2D6X-zQMPGeIge0cR?usp=sharing
+
+Reference: https://chatgpt.com/share/69e0bf08-8930-832a-9f04-368fda236dc8
+---
+
 ##  Future Improvements
 
 - Add ML model for viral prediction  
 - Feature importance analysis  
 - Dashboard (Streamlit)  
 - Real-time data pipeline  
+
+---
+
+## Author
+Sai Krishna Varshith (20097433)
+MSc in Artificial Intelligence 
